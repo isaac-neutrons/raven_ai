@@ -1,38 +1,54 @@
+const { setupAgent } = require("./api/ai_agent.js");
+const routes = require("./routes/routes.js");
+
 const express = require('express');
 const fs = require('fs');
 const { DocumentStore } = require('ravendb');
 
+const RAVENDB_SERVER_URL = "http://127.0.0.1:8080"; 
+const DB = "isaac_db";
+const APP_PORT = process.env.PORT || 3000;
+
 const app = express();
 
-// index.js
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+const store = new DocumentStore(RAVENDB_SERVER_URL, DB);
+store.initialize();
+
+// Initialize agent on startup
+(async () => {
+  await setupAgent();
+})();
+
 console.log("Hello!");
 
 
 
-app.get('/', (req, res) => {
-      //const authOptions = {
-      //certificate: fs.readFileSync("C:\\path_to_your_pfx_file\\cert.pfx"),
-      //type: "pfx", // or "pem"
-      //};
 
-      const store = new DocumentStore("http://127.0.0.1:8080", "isaac_db"); //authOptions
-      store.initialize();
-
-      const session = store.openSession('isaac_db');
-      session.load('employees/1-A')
-          .then(employee => {
-              if (employee) {
-                  res.send(`Employee Last Name: ${employee.LastName}`);
-              } else {
-                  res.status(404).send('Employee not found');
-              }
-              return session.saveChanges();
-          })
-
-          .then(() => {
-              store.dispose();
-          })
+// middleware
+app.use((req, res, next) => {
+  req.dbSession = store.openSession();
+  next();
 });
 
-app.listen(3000, () => console.log('Server is running on http://localhost:3000'));
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  console.log("ERROR", error);
+  res.json({
+    error: {
+      message: error.message,
+      status: error.status,
+    },
+  });
+});
+
+
+// Routes
+app.use("/", routes);
+
+//localhost and port
+app.listen(APP_PORT, () => console.log(`Server is running on http://localhost:${APP_PORT}`));
 
