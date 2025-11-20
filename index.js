@@ -1,4 +1,3 @@
-const { setupAgent } = require("./api/ai_agent.js");
 const routes = require("./routes/routes.js");
 
 const express = require('express');
@@ -18,11 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 const store = new DocumentStore(RAVENDB_SERVER_URL, DB);
 store.initialize();
 
-// Initialize agent on startup
-(async () => {
-  await setupAgent();
-})();
-
 console.log("Hello!");
 
 
@@ -30,6 +24,7 @@ console.log("Hello!");
 
 // middleware
 app.use((req, res, next) => {
+  req.dbstore = store;
   req.dbSession = store.openSession();
   next();
 });

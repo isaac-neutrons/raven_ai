@@ -1,5 +1,6 @@
 # raven_ai
-test project with Node.js, raven and AI agents
+test project with Node.js, ravendb and AI agents
+
 
 # installation instructions
 
@@ -14,7 +15,14 @@ npm install --save express
 
 deactivate_node
 ```
-# start
+
+# start RavenDB
+```bash
+cd RavenDB
+./run.sh
+```
+
+# start application
 
 ```bash
 node index.js
@@ -23,7 +31,7 @@ node index.js
 # ollama instructions
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
-systemctl status ollama
+sudo systemctl status ollama
 sudo systemctl stop ollama
 sudo nano /etc/systemd/system/ollama.service
 Environment="OLLAMA_HOST=0.0.0.0"
