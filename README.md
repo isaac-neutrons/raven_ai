@@ -18,7 +18,7 @@ cd RavenDB
 # start application
 
 ```bash
-uvicorn app.main:app --reload
+python ./main.py
 ```
 
 # ollama instructions

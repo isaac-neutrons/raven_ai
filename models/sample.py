@@ -1,21 +1,17 @@
 from models.odm.datamodel import DataModel
 from pydantic import BaseModel, Field
 from typing import Optional
-from environmentdata import EnvironmentData
+from models.environmentdata import EnvironmentData
+from models.materialdata import MaterialData
 
-
-class MaterialData(BaseModel):
-  Composition: str
-  Mass: Optional[float] = None
 
 class SubstrateData(BaseModel):
   material: MaterialData
-  dimensions: Optional[dict] = Field(default_factory=dict)
+  dimensions: Optional[dict] = Field(default_factory=dict) # TODO dict[?]
 
 
 class LayerData(BaseModel):
   material: MaterialData
-  order: int
   thickness: float
 
 
@@ -23,7 +19,7 @@ class Sample(DataModel):
   _collection_name: str = "sample"
 
   description:str
-  environment: EnvironmentData
-  substrate:MaterialData
+  environmentId:str #EnvironmentData
+  substrate:SubstrateData
   main_layer: Optional[LayerData]
-  layers:list = Field(default_factory=dict) #min=1, max=5
+  layers:list[LayerData] = Field(default_factory=dict) #min=1, max=5

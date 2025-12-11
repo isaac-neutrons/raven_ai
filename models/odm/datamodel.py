@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError, Field
 from typing import Optional, ClassVar, Type, List, Any, Dict
 from ravendb import DocumentStore
+
 import datetime
 
 # RavenDB store (set from your app)
@@ -17,41 +18,37 @@ class DataModel(BaseModel):
     """
 
     # fields for every datamodel
-    id: Optional[str] = None
-    created_at: datetime = datetime.utcnow()
+    Id: Optional[str] = Field(default=None) #for ravendDB match
+    created_at: datetime = datetime.datetime.now(datetime.UTC).isoformat()
     is_deleted: bool = False
 
     # Class-level RavenDB store
     _store: Optional[Any] = None 
-
     class Config:
         arbitrary_types_allowed = True
 
-    # ---------------------------
-    # Collection name resolution
-    # ---------------------------
 
-    @classmethod
-    def collection(cls) -> str:
-        if cls._collection_name:
-            return cls._collection_name
-        return cls.__name__.lower() + "s"
-
+    def __hash__(self):
+        # Hash using 'id' if available, otherwise use object id
+        return hash(self.Id or id(self))
     # ---------------------------
     # CRUD
     # ---------------------------
 
-    def save(self) -> "DataModel":
-        if store is None:
-            raise RuntimeError("Raven store not initialized.")
-
-        with store.open_session() as session:
+    async def save(self, session):
+        print("fff",self.model_dump(exclude={"session"}))
+        if not session:
+            raise RuntimeError("Session not set in model")
+        
+        try:
             session.store(self)
             session.save_changes()
+        except ValidationError as e:
+            print("Validation",e)    
         # Guarantee ID exists after save
-        if not self.id:
+        if not self.Id:
             raise ValueError("RavenDB did not generate an ID for this document.")
-
+        print("self",self)
         return self
 
     # Soft delete method

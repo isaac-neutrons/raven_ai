@@ -21,7 +21,7 @@ class ReducedData(DataModel):
 
     run_title:str
     run_number:str
-    run_start: datetime.utcnow()
-    reduction_time: datetime.utcnow()
+    run_start: datetime.datetime.now(datetime.UTC)
+    reduction_time: datetime.datetime.now(datetime.UTC)
     reflectivity_data: Optional[List[Reflectivity]] = Field(default_factory=list)
     eis: Optional[List[EIS]] = Field(default_factory=list)    

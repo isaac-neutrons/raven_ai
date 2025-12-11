@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastmcp import FastMCP
 from ravendb import DocumentStore
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.middleware import Middleware
 from starlette.requests import Request
 
 import uvicorn

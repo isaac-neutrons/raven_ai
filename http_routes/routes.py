@@ -4,14 +4,17 @@
 
 #module.exports = router;
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
+from controllers.home_controller import home, list_users, create_sample
+
+
 
 router = APIRouter(prefix="/api") #prefix="/users"
 
-@router.get("/")
-async def list_users(request: Request):
-    print("request.state: ", request.state.__dict__)
-    session = request.state.dbsession
-    #users = list(session.query(object_type=dict))
-    users=["u1","u2"]
-    return users
+#Router-Controller Mapping
+router.get("/users")(list_users)
+router.get("/sample/create")(create_sample)
+
+
+#last
+router.get("/")(home)

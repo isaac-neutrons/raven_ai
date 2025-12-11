@@ -1,13 +1,14 @@
 from models.odm.datamodel import DataModel
 from pydantic import Field
 from typing import Optional
-from sample import MaterialData
+from models.materialdata import MaterialData
+
 
 class EnvironmentData(DataModel):
-  _collection_name: str = "environment_data"
+  #__collection_name__: str = "environment_data"
 
   description:str
-  ambiant_medium:MaterialData
+  ambiant_medium:Optional[MaterialData]
   temperature:Optional[float]= Field(default_factory=list)
   pressure:Optional[float] = Field(default_factory=list) 
   relative_humidity:Optional[float] = Field(default_factory=list) 
