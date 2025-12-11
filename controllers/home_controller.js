@@ -1,4 +1,4 @@
-const { setupAgent } = require("../api/ai_agent.js");
+const { setupAgent } = require("../services/ai_agent.js");
 
 const home = async (req, res) => {
     const session = req.dbSession;

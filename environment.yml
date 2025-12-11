@@ -1,0 +1,12 @@
+name: raven_ai
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - fastapi
+  - fastmcp
+  - uvicorn
+  - pip
+  - pip:
+    - ravendb
+    - pyravendb

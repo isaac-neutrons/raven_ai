@@ -1,0 +1,4 @@
+RAVENDB_SERVER_URL = "http://127.0.0.1:8080"
+DB = "isaac_db"
+HOST = "0.0.0.0"
+HTTP_PORT = 3000

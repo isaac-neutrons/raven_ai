@@ -1,19 +1,12 @@
 # raven_ai
-test project with Node.js, ravendb and AI agents
+test project with python, ravendb and AI agents
 
 
-# installation instructions
-
-node-environment creation/activation
+# envirnoment instructions
 
 ```bash
-pip install nodeenv
-nodeenv raven
-source raven/bin/activate
-npm install --save ravendb
-npm install --save express
-
-deactivate_node
+conda env create -f environment.yml
+conda activate raven_ai
 ```
 
 # start RavenDB
@@ -25,7 +18,7 @@ cd RavenDB
 # start application
 
 ```bash
-node index.js
+uvicorn app.main:app --reload
 ```
 
 # ollama instructions
