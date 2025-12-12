@@ -1,5 +1,5 @@
 from fastapi import Request
-from models.sample import Sample,LayerData, MaterialData, SubstrateData
+from models.sample import Sample,LayerData, MaterialData, SubstrateData, Dimensions
 from models.environmentdata import EnvironmentData
 
 async def home(request:Request):
@@ -12,6 +12,14 @@ async def list_users(request: Request):
     users=["u1","u2"]
     return users
 
+
+async def delete_sample(request:Request):
+    session = request.state.dbsession
+    #sample=session.load("samples/225-A", object_type=Sample)
+    sample = await Sample.find_by_id("samples/353-A", session)
+    print("sample", sample)
+    return sample
+    #sample.delete()
 
 async def create_sample(request: Request):
 
@@ -59,7 +67,7 @@ async def create_sample(request: Request):
     ]
     substrate = SubstrateData(
         material=material_0,
-        dimensions={"x":0,"y":1,"z":3}
+        dimensions=Dimensions (x=0,y=1,z=3)
     )
     
     #create sample data object

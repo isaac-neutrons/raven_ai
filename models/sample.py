@@ -4,10 +4,14 @@ from typing import Optional
 from models.environmentdata import EnvironmentData
 from models.materialdata import MaterialData
 
+class Dimensions(BaseModel):
+    x: float
+    y: float
+    z: float
 
 class SubstrateData(BaseModel):
   material: MaterialData
-  dimensions: Optional[dict] = Field(default_factory=dict) # TODO dict[?]
+  dimensions: Optional[Dimensions] = None # TODO dict[?]
 
 
 class LayerData(BaseModel):
@@ -19,7 +23,7 @@ class Sample(DataModel):
   _collection_name: str = "sample"
 
   description:str
-  environmentId:str #EnvironmentData
+  environmentId:Optional[str] = None #EnvironmentData
   substrate:SubstrateData
   main_layer: Optional[LayerData]
-  layers:list[LayerData] = Field(default_factory=dict) #min=1, max=5
+  layers:list[LayerData] = Field(default_factory=list) #min=1, max=5

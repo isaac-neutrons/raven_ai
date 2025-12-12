@@ -36,7 +36,7 @@ class DataModel(BaseModel):
     # ---------------------------
 
     async def save(self, session):
-        print("fff",self.model_dump(exclude={"session"}))
+        #print("fff",self.model_dump(exclude={"session"}))
         if not session:
             raise RuntimeError("Session not set in model")
         
@@ -52,47 +52,52 @@ class DataModel(BaseModel):
         return self
 
     # Soft delete method
-    def delete(self):
+    def delete(self, session):
         self.is_deleted = True
-        self.save()
+        session.store(self)
+        session.save_changes()
 
     # Restore method
-    def restore(self):
+    def restore(self, session):
         self.is_deleted = False
-        self.save()
+        session.store(self)
+        session.save_changes()
 
-    @classmethod
-    def connect_to_store(cls, store: Any):
-        cls._store = store
+    # @classmethod
+    # def connect_to_store(cls, store: Any):
+    #     cls._store = store
         
     @classmethod
-    def find_by_id(cls: Type["DataModel"], doc_id: str) -> Optional["DataModel"]:
-        if store is None:
-            raise RuntimeError("Raven store not initialized.")
+    async def find_by_id(cls: Type["DataModel"], doc_id: str, session) -> Optional["DataModel"]:
+        # if store is None:
+        #     raise RuntimeError("Raven store not initialized.")
+        data=None
+        try:
 
-        with store.open_session() as session:
-            data = session.load(doc_id)
-            if data:
-                return cls(**data)
-            return None
+            print("doc_id",doc_id, cls,session)
+            data = session.load(doc_id, cls)
+            print("data",data)
+        except ValidationError as e:
+            print("Validation",e)     
+        return data
+        
 
     @classmethod
-    def find(cls: Type["DataModel"], **filters) -> List["DataModel"]:
+    def find(cls: Type["DataModel"], session, **filters) -> List["DataModel"]:
         if store is None:
             raise RuntimeError("Raven store not initialized.")
 
-        with store.open_session() as session:
-            q = session.query(
-                object_type=dict,
-                collection_name=cls.collection(),
-                is_deleted=False
-            )
+        q = session.query(
+            object_type=dict,
+            collection_name=cls.collection(),
+            is_deleted=False
+        )
 
-            for field, value in filters.items():
-                q = q.where_equals(field, value)
+        for field, value in filters.items():
+            q = q.where_equals(field, value)
 
-            docs = list(q)
-            return [cls(**d) for d in docs]
+        docs = list(q)
+        return [cls(**d) for d in docs]
 
     # @classmethod
     # def find_one(cls: Type["DataModel"], **filters) -> Optional["DataModel"]:
