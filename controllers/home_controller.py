@@ -15,11 +15,12 @@ async def list_users(request: Request):
 
 async def delete_sample(request:Request):
     session = request.state.dbsession
-    #sample=session.load("samples/225-A", object_type=Sample)
-    sample = await Sample.find_by_id("samples/577-A", session)
-    print("sample", sample)
+    #sample=session.load("samples/610-A", object_type=Sample)
+    sample = await Sample.find_by_id("samples/610-A", session)
+    if sample:
+        sample.delete(session)
     return sample
-    #sample.delete()
+
 
 async def create_sample(request: Request):
 

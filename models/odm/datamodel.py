@@ -48,7 +48,7 @@ class DataModel(BaseModel):
         # Guarantee ID exists after save
         if not self.Id:
             raise ValueError("RavenDB did not generate an ID for this document.")
-        print("self",self)
+        #print("self",self)
         return self
 
     # Soft delete method
@@ -62,21 +62,18 @@ class DataModel(BaseModel):
         self.is_deleted = False
         session.store(self)
         session.save_changes()
-
+        return self
     # @classmethod
     # def connect_to_store(cls, store: Any):
     #     cls._store = store
         
     @classmethod
     async def find_by_id(cls: Type["DataModel"], doc_id: str, session) -> Optional["DataModel"]:
-        # if store is None:
-        #     raise RuntimeError("Raven store not initialized.")
         data=None
         try:
-
-            print("doc_id",doc_id, cls,session)
             data = session.load(doc_id, cls)
-            print("data",data)
+            if data and data.is_deleted:
+                data = None 
         except ValidationError as e:
             print("Validation",e)     
         return data
