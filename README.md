@@ -21,6 +21,14 @@ cd RavenDB
 python ./main.py
 ```
 
+# run the docs
+
+```bash
+cd  ./source
+make html
+```
+The html/ folder is created . Open index.html on a web browser.
+
 # ollama instructions
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
