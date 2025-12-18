@@ -4,9 +4,6 @@ from ravendb import DocumentStore
 
 import datetime
 
-# RavenDB store (set from your app)
-store: Optional[DocumentStore] = None
-
 
 class DataModel(BaseModel):
     """
@@ -23,7 +20,7 @@ class DataModel(BaseModel):
     is_deleted: bool = False
 
     # Class-level RavenDB store
-    _store: Optional[Any] = None 
+    _store: Optional[DocumentStore] = None 
     class Config:
         arbitrary_types_allowed = True
 

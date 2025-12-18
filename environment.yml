@@ -6,6 +6,11 @@ dependencies:
   - fastapi
   - fastmcp
   - uvicorn
+  # docs
+  - sphinx
+  - sphinx_rtd_theme
+  - sphinxcontrib-mermaid
+  - myst-parser  # required for parsing markdown files
   - pip
   - pip:
     - ravendb

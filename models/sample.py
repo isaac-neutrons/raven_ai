@@ -17,7 +17,7 @@ class Layer(BaseModel):
 
 class Sample(DataModel):
   description:str
-  environment_ids:list[str] = None #Environment
+  environment_ids:list[str] #Environment
   substrate:Substrate
   main_layer_index:int #order index of the layers list
   layers:list[Layer] = Field(default_factory=list) #min=1, max=5
