@@ -9,7 +9,7 @@ import asyncio
 
 from http_routes.routes import router as http_routers
 from mcp_routes.routes import register_mcp_handlers
-
+from models.odm.datamodel import DataModel
 from settings import HTTP_PORT, HOST, RAVENDB_SERVER_URL, DB
 
 #DB
@@ -23,6 +23,9 @@ print("DB STATUS:", store._initialized)
 if not store._initialized:
    print("DB Error: db cannot be initialized")
    exit(-1)
+
+#pass DB store to DataModel
+DataModel.connect_to_store(store)
 
 #middleware
 class DBSessionMiddleware(BaseHTTPMiddleware):

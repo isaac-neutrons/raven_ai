@@ -31,12 +31,9 @@ class DataModel(BaseModel):
     def __hash__(self):
         # Hash using 'id' if available, otherwise use object id
         return hash(self.Id or id(self))
-    # ---------------------------
-    # CRUD
-    # ---------------------------
-
+   
+    #Create/Update
     async def save(self, session):
-        #print("fff",self.model_dump(exclude={"session"}))
         if not session:
             raise RuntimeError("Session not set in model")
         
@@ -44,11 +41,11 @@ class DataModel(BaseModel):
             session.store(self)
             session.save_changes()
         except ValidationError as e:
-            print("Validation",e)    
+            print("Validation",e)
+            return self    
         # Guarantee ID exists after save
         if not self.Id:
             raise ValueError("RavenDB did not generate an ID for this document.")
-        #print("self",self)
         return self
 
     # Soft delete method
@@ -63,12 +60,14 @@ class DataModel(BaseModel):
         session.store(self)
         session.save_changes()
         return self
-    # @classmethod
-    # def connect_to_store(cls, store: Any):
-    #     cls._store = store
-        
+    
     @classmethod
-    async def find_by_id(cls: Type["DataModel"], doc_id: str, session) -> Optional["DataModel"]:
+    def connect_to_store(cls, store: Any):
+        cls._store = store
+
+    #Find By Id    
+    @classmethod
+    async def find_by_id(cls: Type["DataModel"],session, doc_id: str) -> Optional["DataModel"]:
         data=None
         try:
             data = session.load(doc_id, cls)
@@ -78,53 +77,22 @@ class DataModel(BaseModel):
             print("Validation",e)     
         return data
         
-
+    #Find all non-deleted
     @classmethod
-    def find(cls: Type["DataModel"], session, **filters) -> List["DataModel"]:
-        if store is None:
-            raise RuntimeError("Raven store not initialized.")
+    def find_active(cls: Type["DataModel"], state: Dict):
+        collection_name = state.dbstore.conventions.get_collection_name(cls)
+        return state.dbsession.query_collection(collection_name).where_equals("is_deleted", False)
 
-        q = session.query(
-            object_type=dict,
-            collection_name=cls.collection(),
-            is_deleted=False
-        )
-
-        for field, value in filters.items():
-            q = q.where_equals(field, value)
-
-        docs = list(q)
-        return [cls(**d) for d in docs]
-
-    # @classmethod
-    # def find_one(cls: Type["DataModel"], **filters) -> Optional["DataModel"]:
-    #     results = cls.find(**filters)
-    #     return results[0] if results else None
-    
-    # -------------------------------------------------------
-    # RQL SUPPORT
-    # -------------------------------------------------------
+    #find all for performance comparisons!
     @classmethod
-    def rql_raw(cls, query: str, params: Dict[str, Any] = None) -> List[Dict[str, Any]]:
-        """
-        Run raw RQL and return raw dicts.
-        """
-        if store is None:
-            raise RuntimeError("Raven store not initialized.")
+    def find_all(cls: Type["DataModel"], state: Dict):
+        collection_name = state.dbstore.conventions.get_collection_name(cls)
+        return state.dbsession.query_collection(collection_name)
 
-        with store.open_session() as session:
-            q = session.advanced.raw_query(query, dict)
-
-            if params:
-                for key, value in params.items():
-                    q.add_parameter(key, value)
-
-            return list(q)  # raw list[dict]
-
+    #Raq Rql support
     @classmethod
-    def rql(cls: Type["DataModel"], query: str, params: Dict[str, Any] = None) -> List["DataModel"]:
-        """
-        Run raw RQL and return typed Pydantic models.
-        """
-        raw = cls.rql_raw(query, params)
-        return [cls(**doc) for doc in raw]
+    def raw_rql(cls: Type["DataModel"], session, query: str) -> List["DataModel"]:
+
+        # Execute the raw query
+        results = list(session.advanced.raw_query(query, object_type=cls))
+        return results

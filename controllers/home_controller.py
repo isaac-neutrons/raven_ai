@@ -7,16 +7,29 @@ async def home(request:Request):
 
 async def list_users(request: Request):
     print("request.state: ", request.state.__dict__)
-    session = request.state.dbsession
-    #users = list(session.query(object_type=dict))
     users=["u1","u2"]
     return users
 
 
+async def rql_sample(request:Request):
+    session = request.state.dbsession
+    query = "from Samples where id() = 'samples/641-A'"
+    sample_list = Sample.raw_rql(session,query)
+    return sample_list
+
+
+async def find_sample(request:Request):
+    state = request.state
+    sample_list = list( \
+        Sample.find_active(state) \
+              .where_equals("description", "sample data") \
+              .where_greater_than_or_equal("main_layer_index", 0)
+        )
+    return sample_list
+
 async def delete_sample(request:Request):
     session = request.state.dbsession
-    #sample=session.load("samples/610-A", object_type=Sample)
-    sample = await Sample.find_by_id("samples/610-A", session)
+    sample = await Sample.find_by_id(session,"samples/610-A")
     if sample:
         sample.delete(session)
     return sample
