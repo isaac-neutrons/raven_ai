@@ -59,6 +59,12 @@ DB Schema
     class Measurement{
         +str run_title
         +str run_number?
+        +str proposal_number
+        +enum facility
+        +str probe
+        +enum technique
+        +str technique_description
+        +bool is_simulated
         +dateTime run_start
         +str raw_file_path
     }
@@ -74,7 +80,11 @@ DB Schema
 
     class EIS{
         +float frequency
-        +float z
+        +float real_z
+        +float imaginery_z
+        +float phase
+        +str potential
+
     }
 
 
@@ -89,7 +99,6 @@ DB Schema
     }
 
     class Experiment{
-        +str:ipts
         +Sample sample
     }
 

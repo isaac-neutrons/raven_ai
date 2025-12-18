@@ -14,8 +14,8 @@ sys.path.insert(0, os.path.abspath("../../src"))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Hyspecppt"
-copyright = "2024, ORNL"  # noqa A001
+project = "RavenAI"
+copyright = "2025, ORNL"  # noqa A001
 author = "ORNL"
 # version = versioningit.get_version("../../")
 # # The full version, including alpha/beta/rc tags

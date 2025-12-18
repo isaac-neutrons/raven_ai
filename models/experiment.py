@@ -4,5 +4,4 @@ from typing import Optional, List
 from sample import Sample
 
 class Experiment(DataModel):
-    ipts:str    
     sample: Sample
