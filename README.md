@@ -39,5 +39,5 @@ sudo nano /etc/systemd/system/ollama.service
 Environment="OLLAMA_HOST=0.0.0.0"
 ```
 
-
-https://github.com/ravendb/ravendb-python-client/tree/v7.1
+# Documentation
+[Isaac Raven_AI readthedocs](https://raven-ai.readthedocs.io/)

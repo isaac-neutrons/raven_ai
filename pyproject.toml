@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "isaac_raven_ai"
 version = "0.1.0"
-description = "ISAAC web application with HTTP and MCP and DB"
+description = "ISAAC web application with HTTP-MCP and DB"
 readme = "README.md"
 requires-python = ">=3.14"
 license-files = ["LICENSE"]
