@@ -31,11 +31,11 @@ DB Schema
 
     class Sample{
         +str description
-        +list[Environment] environments
+        +list~Environment~ environments
         +Substrate substrate
         +int main_layer_index
-        +list[Layer] layers
-        +list[Publication] publications
+        +list~Layer~ layers
+        +list~Publication~ publications
     }
 
     class Substrate{
@@ -64,7 +64,7 @@ DB Schema
         +enum technique
         +str technique_description
         +bool is_simulated
-        +dateTime run_start
+        +datetime run_start
         +str raw_file_path
     }
 
@@ -74,7 +74,7 @@ DB Schema
         +float dR
         +float dQ
         +float measurement_geometry
-        +dateTime reduction_time
+        +datetime reduction_time
     }
 
     class EIS{
@@ -93,7 +93,7 @@ DB Schema
         +float temperature?
         +float pressure
         +float relative_humidity?
-        +list[Measurement] measurements
+        +list~Measurement~ measurements
     
     }
 
@@ -103,11 +103,11 @@ DB Schema
         +str url
         +str abstract
         +str notes
-        +list[str] keywords
+        +list~str~ keywords
     }
 
-DataModel vs BaseModel
-+++++++++++++++++++++++++
+DataModel ODM vs BaseModel
++++++++++++++++++++++++++++
 
 Classes defined as DataModel are stored in separate collections in the DB. Classes defined as (pydantic) BaseModel are embedded in the outter class's collections, e.g. JSON schema fields.
 
@@ -117,23 +117,6 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
 
  classDiagram
 
-    Sample "1" -->"N" Environment
-    Sample "1" -->"1" Substrate
-    Sample "1" -->"1<=N<=5" Layer
-
-    Substrate "1" -->"1" Material : substrate_material
-    Layer "1" -->"1" Material : layer_material
-
-
-    Measurement <|-- Reflectivity
-    Measurement <|-- EIS
-
-    Environment "1" -->"1" Material : ambiant_medium_material
-    Environment "1" -->"N" Measurement
-
-    Sample "1" -->"N" Publication 
-
-
     Sample <|-- DataModel
     Layer <|-- BaseModel
     Substrate <|-- BaseModel
@@ -142,26 +125,20 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Environment <|-- DataModel
     Publication <|-- DataModel
 
+    Sample "1" o-- "N" Environment
+    Sample "1" *-- "1" Substrate
+    Sample "1" *-- "1<=N<=5" Layer
 
-   class DataModel{
-        +str: Id
-        +dateTime: created_at
-        +bool: is_deleted
-        -$DBstore: _store
-        
-        +save(self, session)
-        +delete(self,session)
-        +restore(self,session)
+    Substrate "1" *-- "1" Material : substrate_material
+    Layer "1" *-- "1" Material : layer_material
 
-        +$connect_to_store(cls)
-        +$find_by_id(cls, session, doc_id)
-        +$find_active(cls, session)
-        +$raw_rql(cls, session, query)
-    }
+    Measurement <|-- Reflectivity
+    Measurement <|-- EIS
 
-    class BaseModel{
+    Environment "1" *--"1" Material : ambiant_medium_material
+    Environment "1" o--"N" Measurement
 
-    }
+    Sample "N" o--"N" Publication     
     
     class Sample{
 
@@ -196,6 +173,37 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
 
     
     }
+
+   class DataModel{
+        +str: Id
+        +datetime: created_at
+        +bool: is_deleted
+        -$DBstore: _store
+        
+        +save(self, session)
+        +delete(self,session)
+        +restore(self,session)
+
+        +$connect_to_store(cls)
+        +$find_by_id(cls, session, doc_id)
+        +$find_active(cls, session)
+        +$raw_rql(cls, session, query)
+    }
+
+    class BaseModel{
+
+    }
+
+
+Considerations:
+
+* Data Objects that are defined as *DataModel* (Sample, Measurement, Environment, Publication) are Documents within their DataModel-defined Collections. Relationships with other DataModel classes are defined as aggregation with the current schema. However, they can be deleted programmatically, if needed, in case there is a strong dependency with another DataModel object that needs to be deleted. 
+* Data Objects that are defined as *BaseModel* (Layer, Substrate, Material) by default introduce composition relationships with the associated DataModel classes. Thus layers, substrate and material are unique within the context they live, e.g. a material (ambiant_medium_material) for a specific environment only exists in that environment and no other DataModel object can point and refer to it. While materials with similar properties can exist on different environments, they are considered different (objects) with this schema. Additionally, if the main dataobject, e.g. environment, is deleted the associated BaseModel objects are deleted, too.
+* The concepts of DataModel and BaseModel allow for the following:
+    * BaseModel objects being embedded into the DataModel ones eliminate joins to retrieve them, while ensuring a standard format of the embedded objects.
+    * DataModel Collections are to be used in the DB queries
+    * BaseModel dataobjects cannot be queried directly
+    * DataModel class enables for unified encapsulated operational and DB-wrapped capabilities
 
 
 Software Architecture

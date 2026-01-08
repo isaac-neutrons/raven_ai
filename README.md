@@ -18,13 +18,13 @@ cd RavenDB
 # start application
 
 ```bash
-python ./main.py
+python ./src/main.py
 ```
 
 # create the docs
 
 ```bash
-cd  ./docs
+cd  ./src/docs
 make html
 ```
 The html/ folder is created . Open index.html on a web browser.
