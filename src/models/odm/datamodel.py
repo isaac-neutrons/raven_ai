@@ -1,8 +1,8 @@
-from pydantic import BaseModel, ValidationError, Field
+from pydantic import BaseModel, ValidationError, Field, ConfigDict
 from typing import Optional, ClassVar, Type, List, Any, Dict
 from ravendb import DocumentStore
 
-import datetime
+from datetime import datetime, timezone
 
 
 class DataModel(BaseModel):
@@ -16,14 +16,14 @@ class DataModel(BaseModel):
 
     # fields for every datamodel
     Id: Optional[str] = Field(default=None) #for ravendDB match
-    created_at: datetime = datetime.datetime.now(datetime.UTC).isoformat()
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     is_deleted: bool = False
 
     # Class-level RavenDB store
     _store: Optional[DocumentStore] = None 
-    class Config:
+    model_config =ConfigDict(
         arbitrary_types_allowed = True
-
+    )
 
     def __hash__(self):
         # Hash using 'id' if available, otherwise use object id
