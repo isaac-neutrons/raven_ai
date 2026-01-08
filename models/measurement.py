@@ -8,7 +8,7 @@ from typing import Optional
 class Measurement(DataModel): 
     proposal_number:str
     facility:str #enum : SNS, HFIR , LCLS
-    lab:str #SLAC
+    lab:str #enum: SLAC 
     probe:str #enum only: neutrons, xray or other
     technique: str #enum: 
     technique_description: str # prepend the technique value above of the raw data

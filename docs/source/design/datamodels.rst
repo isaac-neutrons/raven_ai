@@ -7,9 +7,7 @@ DataModels
 
 
 DB Schema
-+++++++++++++++++++++++++
-
-
++++++++++++++
 
 .. mermaid::
 
@@ -29,15 +27,15 @@ DB Schema
     Environment "1" -->"1" Material : ambiant_medium_material
     Environment "1" -->"N" Measurement
 
-    Experiment "1" -->"1" Sample
-
+    Sample "1" -->"N" Publication 
 
     class Sample{
         +str description
-        +Environment environments
+        +list[Environment] environments
         +Substrate substrate
         +int main_layer_index
-        +Layer layers
+        +list[Layer] layers
+        +list[Publication] publications
     }
 
     class Substrate{
@@ -57,6 +55,7 @@ DB Schema
     }
     
     class Measurement{
+        +str lab        
         +str run_title
         +str run_number?
         +str proposal_number
@@ -94,16 +93,18 @@ DB Schema
         +float temperature?
         +float pressure
         +float relative_humidity?
-        +Measurement measurements
+        +list[Measurement] measurements
     
     }
 
-    class Experiment{
-        +Sample sample
+
+    class Publication{
+        +str title
+        +str url
+        +str abstract
+        +str notes
+        +list[str] keywords
     }
-
-
-
 
 DataModel vs BaseModel
 +++++++++++++++++++++++++
@@ -130,7 +131,7 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Environment "1" -->"1" Material : ambiant_medium_material
     Environment "1" -->"N" Measurement
 
-    Experiment "1" -->"1" Sample
+    Sample "1" -->"N" Publication 
 
 
     Sample <|-- DataModel
@@ -139,7 +140,8 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Material <|-- BaseModel
     Measurement <|-- DataModel
     Environment <|-- DataModel
-    Experiment <|-- DataModel
+    Publication <|-- DataModel
+
 
    class DataModel{
         +str: Id
@@ -195,8 +197,34 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     
     }
 
-    class Experiment{
-    }
+
+Software Architecture
+++++++++++++++++++++++++
+
+Software Architecture
+
+.. mermaid::
+
+    architecture-beta
+        group process(cloud)[WebApplication Process]
+        group user(cloud)[api]
+
+        service db(database)[Database]
+        service WebServer(server)[WebServer] in process
+        service MCPServer(server)[MCPServer] in process
+
+        db:L -- R:WebServer
 
 
- 
+.. mermaid::
+
+    block
+        columns 3
+        Frontend blockArrowId6<[" "]>(right) Backend
+        space:2 down<[" "]>(down)
+        Disk left<[" "]>(left) Database[("Database")]
+
+        classDef front fill:#696,stroke:#333;
+        classDef back fill:#969,stroke:#333;
+        class Frontend front
+        class Backend,Database back

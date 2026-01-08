@@ -12,7 +12,7 @@ table.docutils td {
 
 
 .mermaid svg {
-    width: 85% !important;
+    width: 40% !important;
     height: auto !important;
     transform-origin: center center;
 }

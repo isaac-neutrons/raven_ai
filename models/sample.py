@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from models.material import Material
 
-
 class Substrate(BaseModel):
   material: Material
   geometry: Optional[str] = None
@@ -21,3 +20,4 @@ class Sample(DataModel):
   substrate:Substrate
   main_layer_index:int #order index of the layers list
   layers:list[Layer] = Field(default_factory=list) #min=1, max=5
+  publication_ids:list[str] = Field(default_factory=list) #Publication
