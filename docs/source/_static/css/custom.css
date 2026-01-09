@@ -16,3 +16,11 @@ table.docutils td {
     height: auto !important;
     transform-origin: center center;
 }
+
+
+/* .node.default{
+    min-height:200px;
+
+  transform-origin: top left !important;
+  transform-box: fill-box;
+} */

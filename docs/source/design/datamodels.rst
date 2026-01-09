@@ -14,10 +14,9 @@ DB Schema
  classDiagram
 
     Sample "1" -->"N" Environment
-    Sample "1" -->"1" Substrate
-    Sample "1" -->"1<=N<=5" Layer
+    Sample "1" -->"1" Layer : substrate_layer
+    Sample "1" -->"1<=N<=5" Layer : layers
 
-    Substrate "1" -->"1" Material : substrate_material
     Layer "1" -->"1" Material : layer_material
 
 
@@ -32,17 +31,13 @@ DB Schema
     class Sample{
         +str description
         +list~Environment~ environments
-        +Substrate substrate
-        +int main_layer_index
+        +Layer substrate
+        +str geometry?
+        +str main_composition
         +list~Layer~ layers
         +list~Publication~ publications
     }
 
-    class Substrate{
-        +Material material
-        +str geometry?
-        +float thickness?
-    }
 
     class Layer{
         +Material material
@@ -52,6 +47,7 @@ DB Schema
     class Material{
         +str:composition
         +float mass?
+        +float density?
     }
     
     class Measurement{
@@ -119,17 +115,15 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
 
     Sample <|-- DataModel
     Layer <|-- BaseModel
-    Substrate <|-- BaseModel
     Material <|-- BaseModel
     Measurement <|-- DataModel
     Environment <|-- DataModel
     Publication <|-- DataModel
 
     Sample "1" o-- "N" Environment
-    Sample "1" *-- "1" Substrate
-    Sample "1" *-- "1<=N<=5" Layer
+    Sample "1" *-- "1, 1" Layer : substrate_layer
+    Sample "1" *-- "1, 1<=N<=5" Layer : layers
 
-    Substrate "1" *-- "1" Material : substrate_material
     Layer "1" *-- "1" Material : layer_material
 
     Measurement <|-- Reflectivity
@@ -141,10 +135,6 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Sample "N" o--"N" Publication     
     
     class Sample{
-
-    }
-
-    class Substrate{
 
     }
 
@@ -168,13 +158,12 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
 
     }
 
-
     class Environment{
 
     
-    }
+    } 
 
-   class DataModel{
+    class DataModel{
         +str: Id
         +datetime: created_at
         +bool: is_deleted
@@ -192,19 +181,20 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
 
     class BaseModel{
 
-    }
-
-
+    } 
+   
 Considerations:
 
 * Data Objects that are defined as *DataModel* (Sample, Measurement, Environment, Publication) are Documents within their DataModel-defined Collections. Relationships with other DataModel classes are defined as aggregation with the current schema. However, they can be deleted programmatically, if needed, in case there is a strong dependency with another DataModel object that needs to be deleted. 
-* Data Objects that are defined as *BaseModel* (Layer, Substrate, Material) by default introduce composition relationships with the associated DataModel classes. Thus layers, substrate and material are unique within the context they live, e.g. a material (ambiant_medium_material) for a specific environment only exists in that environment and no other DataModel object can point and refer to it. While materials with similar properties can exist on different environments, they are considered different (objects) with this schema. Additionally, if the main dataobject, e.g. environment, is deleted the associated BaseModel objects are deleted, too.
+* Data Objects that are defined as *BaseModel* (Layer, Material) by default introduce composition relationships with the associated DataModel classes. Thus layers, substrate and material are unique within the context they live, e.g. a material (ambiant_medium_material) for a specific environment only exists in that environment and no other DataModel object can point and refer to it. While materials with similar properties can exist on different environments, they are considered different (objects) with this schema. Additionally, if the main dataobject, e.g. environment, is deleted the associated BaseModel objects are deleted, too.
 * The concepts of DataModel and BaseModel allow for the following:
     * BaseModel objects being embedded into the DataModel ones eliminate joins to retrieve them, while ensuring a standard format of the embedded objects.
     * DataModel Collections are to be used in the DB queries
     * BaseModel dataobjects cannot be queried directly
     * DataModel class enables for unified encapsulated operational and DB-wrapped capabilities
 
+
+Note: We defined the relationships based on: UML composition models are nested documents with a dependent lifecycle, while aggregation models linked documents that can exist independently. Aggregation and composition are subsets of Association.
 
 Software Architecture
 ++++++++++++++++++++++++
