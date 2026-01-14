@@ -1,9 +1,9 @@
 .. Purpose: The root document of the project, which serves as welcome page and contains the root
 .. of the "table of contents tree" (or toctree).
 
-========
-Raven_ai
-========
+===============
+ISAAC Raven_ai
+===============
 
 
 .. note::

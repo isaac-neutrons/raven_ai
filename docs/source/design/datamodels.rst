@@ -121,8 +121,8 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Publication <|-- DataModel
 
     Sample "1" o-- "N" Environment
-    Sample "1" *-- "1, 1" Layer : substrate_layer
-    Sample "1" *-- "1, 1<=N<=5" Layer : layers
+    Sample "1" *-- "1" Layer : substrate_layer
+    Sample "1" *-- "1<=N<=5" Layer : layers
 
     Layer "1" *-- "1" Material : layer_material
 
