@@ -194,7 +194,7 @@ Considerations:
     * DataModel class enables for unified encapsulated operational and DB-wrapped capabilities
 
 
-Note: We defined the relationships based on: UML composition models are nested documents with a dependent lifecycle, while aggregation models linked documents that can exist independently. Aggregation and composition are subsets of Association.
+Note: We defined the relationships based on: UML composition models are nested documents with a dependent lifecycle, while aggregation models linked documents that can exist independently. Aggregation and composition are subsets of association.
 
 Software Architecture
 ++++++++++++++++++++++++

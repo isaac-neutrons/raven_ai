@@ -3,6 +3,8 @@ from fastmcp import FastMCP
 from ravendb import DocumentStore
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 import uvicorn
 import asyncio
@@ -47,6 +49,37 @@ if __name__ == '__main__':
     app = FastAPI(title="HTTP App")
     #middleware
     app.add_middleware(DBSessionMiddleware)
+    
+    #validation exception halder response format close to RFC 7807
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        # Convert FastAPI/Pydantic errors into RFC7807-like shape
+        invalid_params = []
+        for e in exc.errors():
+            field_path = [str(x) for x in e.get("loc", [])] 
+            message = e.get("msg", "Invalid value")
+            type_error = e.get("type", "validation_error")
+            invalid_params.append({
+                "name": ".".join(field_path),
+                "reason": message,
+                "type": type_error,
+            })
+
+        problem = {
+            "type": "https://raven-ai.readthedocs.io/", # point to documentation for error
+            "title": "Request validation failed",
+            "status": 422,
+            "detail": "One or more fields have invalid values.",
+            "instance": str(request.url.path),
+            "invalid_params": invalid_params,
+        }
+
+        return JSONResponse(
+            status_code=422,
+            content=problem,
+            media_type="application/problem+json",
+        )
+
     # routers for http API endpoints
     app.include_router(http_routers)
 
