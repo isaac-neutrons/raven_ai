@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ValidationError, Field, ConfigDict
 from typing import Optional, ClassVar, Type, List, Any, Dict
 from ravendb import DocumentStore
+import uuid
 
 from datetime import datetime, timezone
 
@@ -31,6 +32,10 @@ class DataModel(BaseModel):
    
     #Create/Update
     async def save(self, session):
+        if "Id" not in self:
+            # Generate GUID
+            self.Id = str(uuid.uuid4())
+            
         if not session:
             raise RuntimeError("Session not set in model")
         

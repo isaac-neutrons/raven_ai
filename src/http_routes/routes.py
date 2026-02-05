@@ -6,8 +6,8 @@
 
 from fastapi import APIRouter
 from controllers.home_controller import home
-from controllers.sample_controller import create_sample
-#, delete_sample, find_sample,rql_sample
+from controllers.sample_controller import create_sample, delete_sample, get_sample, update_sample
+#rql_sample
 from models.sample import Sample
 
 
@@ -16,15 +16,21 @@ router = APIRouter(prefix="/api") #prefix="/users"
 #Router-Controller Mapping
 
 #sample
-#add_or_update_sample
+#get_sample
+router.get("/sample/get/{sample_id}")(get_sample)
+#add sample
+router.post("/sample/create",response_model=Sample,status_code=201,)(create_sample)
+#update sample
+#router.post("/sample/update/{sample_id}",response_model=Sample,status_code=201,)(update_sample)
+
+#delete_sample
+router.delete("/sample/delete/{sample_id}")(delete_sample)
+
+
 #add_environments
 #add_publications
 #add_measurements
-#get_sample
-#delete_sample
-#router.get("/sample/find")(find_sample)
-router.post("/sample/create",response_model=Sample,status_code=201,)(create_sample)
-#router.delete("/sample/delete")(delete_sample)
+
 
 #reflectivity
 #add_or_update_reflectivity
