@@ -2,6 +2,7 @@ from models.odm.datamodel import DataModel
 from pydantic import Field
 from typing import Optional
 from models.material import Material
+import datetime
 
 class Environment(DataModel):
 
@@ -11,3 +12,4 @@ class Environment(DataModel):
   pressure:Optional[float] = Field(default_factory=list) 
   relative_humidity:Optional[float] = Field(default_factory=list) 
   measurements_ids: Optional[list[str]] = Field(default_factory=list) # point to Measurements
+  #timestamp: datetime.datetime.now(datetime.UTC)

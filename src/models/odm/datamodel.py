@@ -4,6 +4,8 @@ from ravendb import DocumentStore
 import uuid
 
 from datetime import datetime, timezone
+from pydantic import ValidationError, TypeAdapter
+from typing import Dict, Any,Annotated
 
 
 class DataModel(BaseModel):
@@ -69,14 +71,13 @@ class DataModel(BaseModel):
 
     #Find By Id    
     @classmethod
-    async def find_by_id(cls: Type["DataModel"],session, doc_id: str) -> Optional["DataModel"]:
+    def find_by_id(cls: Type["DataModel"],session, doc_id: str) -> Optional["DataModel"]:
         data=None
-        try:
-            data = session.load(doc_id, cls)
-            if data and data.is_deleted:
-                data = None 
-        except ValidationError as e:
-            print("Validation",e)     
+        data = session.load(doc_id, cls)
+        if data and data.is_deleted:
+            data = None 
+        # except ValidationError as e:
+        #     print("Validation",e)     
         return data
         
     #Find all non-deleted
@@ -98,3 +99,55 @@ class DataModel(BaseModel):
         # Execute the raw query
         results = list(session.advanced.raw_query(query, object_type=cls))
         return results
+
+    #validation methods
+    @classmethod
+    def validate_main_fields(cls: Type["DataModel"], payload)-> List:
+        errors = []
+        model_fields = cls.model_fields
+
+        for key, value in payload.items():
+            #check if exists
+            if key not in model_fields:
+                errors.append({
+                    "loc": ("body", "dict", key),
+                    "msg": "extra field not permitted",
+                    "type": "extra_forbidden",
+                })
+                continue
+            #check if valid
+            field = model_fields.get(key)
+            #get field metadata if exist
+            if field.metadata:
+                annotated_type = Annotated[field.annotation, *field.metadata]
+            else:
+                annotated_type = field.annotation
+            try:
+                #model_cls.model_validate({key: value})
+                TypeAdapter(annotated_type).validate_python(value)
+            except ValidationError as ve:
+                for err in ve.errors():
+                    errors.append({
+                        "loc": ("body", "data") + tuple(err.get("loc", (key,))),
+                        "msg": err.get("msg", "validation error"),
+                        "type": err.get("type", "value_error"),
+                    })
+        return errors
+
+    @classmethod
+    def validate_foreign_keys(cls: Type["DataModel"],session, foreign_keys: list[str], field):
+        errors=[]
+        missing = []
+
+        for i, obj_id in enumerate(foreign_keys):
+            doc = session.load(obj_id)
+            if doc is None:
+                missing.append([i,obj_id])
+
+        for [indx,obj_id] in missing:
+            errors.append({
+                "loc": ("body", "data", field, indx),
+                "msg": f"Document with Id '{obj_id}' not found",
+                "type": "value_error.foreign_key",
+            })
+        return errors

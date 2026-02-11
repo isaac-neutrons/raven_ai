@@ -21,7 +21,7 @@ router.get("/sample/get/{sample_id}")(get_sample)
 #add sample
 router.post("/sample/create",response_model=Sample,status_code=201,)(create_sample)
 #update sample
-#router.post("/sample/update/{sample_id}",response_model=Sample,status_code=201,)(update_sample)
+router.post("/sample/update/{sample_id}",response_model=Sample,status_code=201,)(update_sample)
 
 #delete_sample
 router.delete("/sample/delete/{sample_id}")(delete_sample)

@@ -17,3 +17,8 @@ class Sample(DataModel):
   geometry: Optional[str] = None # from substrate not required
   layers:list[Layer] = Field(min_length=1,max_length=5) #all the layer including the main one!
   publication_ids:list[str] = Field(default_factory=list) #Publication
+  related_sample_ids:list[str] = Field(default_factory=list) #Sample
+
+  @classmethod
+  def get_foreign_key_fields(cls):
+    return ["environment_ids","publication_ids","related_sample_ids"]
