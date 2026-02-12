@@ -1,7 +1,5 @@
 from fastapi import Request, Body, Response, status
-from models.sample import Sample,Layer
-# from models.material import Material
-# from models.environment import Environment
+from models.sample import Sample
 import urllib.parse
 from typing import Dict, Any
 from fastapi.exceptions import RequestValidationError, HTTPException

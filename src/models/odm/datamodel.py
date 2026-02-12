@@ -74,10 +74,12 @@ class DataModel(BaseModel):
     def find_by_id(cls: Type["DataModel"],session, doc_id: str) -> Optional["DataModel"]:
         data=None
         data = session.load(doc_id, cls)
-        if data and data.is_deleted:
-            data = None 
-        # except ValidationError as e:
-        #     print("Validation",e)     
+        print("data",data)
+        try:
+            if data and data.is_deleted:
+                data = None 
+        except ValidationError as e:
+            print("Validation",e)     
         return data
         
     #Find all non-deleted
@@ -123,7 +125,6 @@ class DataModel(BaseModel):
             else:
                 annotated_type = field.annotation
             try:
-                #model_cls.model_validate({key: value})
                 TypeAdapter(annotated_type).validate_python(value)
             except ValidationError as ve:
                 for err in ve.errors():
@@ -133,6 +134,10 @@ class DataModel(BaseModel):
                         "type": err.get("type", "value_error"),
                     })
         return errors
+
+    @classmethod
+    def get_foreign_key_fields(cls):
+        return []
 
     @classmethod
     def validate_foreign_keys(cls: Type["DataModel"],session, foreign_keys: list[str], field):
