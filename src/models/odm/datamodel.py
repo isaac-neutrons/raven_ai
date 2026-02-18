@@ -64,6 +64,13 @@ class DataModel(BaseModel):
         session.save_changes()
         return self
     
+    def view_object(self):
+        #remove data management fields from the returned object
+        data = self
+        del data.is_deleted
+        del data.created_at
+        return data
+
     @classmethod
     def connect_to_store(cls, store: Any):
         cls._store = store

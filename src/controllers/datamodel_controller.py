@@ -39,15 +39,13 @@ async def get_dataobject(request:Request, datamodel: str, obj_id:str):
     
     #obj_id = urllib.parse.unquote(obj_id, encoding='utf-8', errors='strict')
     obj = cls_model.find_by_id(session, obj_id)
-    return obj
+    return obj.view_object()
 
 
 #Body(..., embed=True)
 ### valid JSON schema
 ##from the exact fields from the associated datamodel!
 async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)):
-    #print(request)
-    print(data)
     session = request.state.dbsession
     cls_model = datamodels[datamodel]
     if cls_model is None:
@@ -69,7 +67,7 @@ async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)
         raise RequestValidationError(e.errors())
 
     doc = await obj.save(request.state.dbsession)
-    return doc    
+    return doc.view_object()
 
 async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict[str,Any] = Body(..., embed=True)):
     session = request.state.dbsession
@@ -97,7 +95,7 @@ async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict
            setattr(data_obj, field, value)
         
         doc = await data_obj.save(request.state.dbsession)
-        return doc
+        return doc.view_object()
     
     #data_obj does not exist
     raise HTTPException(
