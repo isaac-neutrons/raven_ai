@@ -68,13 +68,10 @@ async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)
     except ValidationError as e:
         raise RequestValidationError(e.errors())
 
-    print("obj",obj)
     doc = await obj.save(request.state.dbsession)
-    print("doc",doc)
     return doc    
 
 async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict[str,Any] = Body(..., embed=True)):
-    print(data)
     session = request.state.dbsession
     cls_model = datamodels[datamodel]
     if cls_model is None:

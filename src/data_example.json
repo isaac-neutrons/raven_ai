@@ -1,0 +1,57 @@
+{
+    "description":"environment desription",
+    "ambiant_medium": {
+        "composition": "composition1",
+        "mass": 1.9,
+        "density":2.21
+    },
+    "temperature":54.78,
+    "pressure":1.23,
+    "relative_humidity": 12.56,
+    "measurements_ids":[],
+    "timestamp": "2024-05-17 12:30:00"
+}
+
+
+{
+    "proposal_number":"123",
+    "facility":"SNS",
+    "lab":"ORNL",
+    "probe":"neutrons",
+    "technique": "Reflectivity",
+    "technique_description": "rwrwerwr sdgsdg",
+    "is_simulated":false,
+    "run_title":"Run1267",
+    "run_number":"3",
+    "run_start": "2024-05-17 12:30:00",
+    "raw_file_path":"/home/user/file.nxs",
+    "q_1_angstrom":34.11,
+    "r": 1.2,
+    "dR": 0.3,
+    "dQ":6.1,
+    "measurement_geometry":14,
+    "reduction_time": "2024-05-17 14:30:00"
+}
+
+
+
+{
+    "proposal_number":"123",
+    "facility":"SNS",
+    "lab":"ORNL",
+    "probe":"neutrons",
+    "technique": "Reflectivity",
+    "technique_description": "another sdgsdg",
+    "is_simulated":false,
+    "run_title":"Run1267",
+    "run_number":"3",
+    "run_start": "2024-05-17T11:30:00Z",
+    "raw_file_path":"/home/user/file2.nxs",
+    "frequency":2.3,
+    "duration":10.6,
+    "real_z": 5.66,
+    "imaginery_z": 8.90,
+    "phase":6.6
+    "potential":"there is potential"
+
+}

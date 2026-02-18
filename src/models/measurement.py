@@ -23,14 +23,8 @@ class Measurement(DataModel):
 class Reflectivity(Measurement):    
     q_1_angstrom:float
     r:float
-    d_r: float = Field(
-        validation_alias=AliasChoices("dR", "d_r"),
-        serialization_alias="dR",
-    )
-    d_q: float = Field(
-        validation_alias=AliasChoices("dQ", "d_q"),
-        serialization_alias="dQ",
-    )
+    d_r: float
+    d_q: float
     measurement_geometry:float
     reduction_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

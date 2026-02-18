@@ -10,11 +10,11 @@ from typing import Dict, Any,Annotated
 
 class DataModel(BaseModel):
     """
-    Mongoose-like base model for RavenDB:
-      - schema validation (Pydantic)
-      - CRUD operations
+    ODM model for RavenDB:
+      - schema validation
+      - CRUD operations, soft delete
       - collection auto-naming
-      - JSON serialization
+      - simple queries
     """
 
     # fields for every datamodel
@@ -34,10 +34,9 @@ class DataModel(BaseModel):
    
     #Create/Update
     async def save(self, session):
-        if "Id" not in self:
+        if self.Id is None:
             # Generate GUID
             self.Id = str(uuid.uuid4())
-            
         if not session:
             raise RuntimeError("Session not set in model")
         

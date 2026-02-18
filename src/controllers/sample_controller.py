@@ -34,7 +34,6 @@ async def get_sample(request:Request, sample_id:str):
     session = request.state.dbsession
     obj_id = urllib.parse.unquote(sample_id, encoding='utf-8', errors='strict')
     sample = Sample.find_by_id(session, obj_id)
-    print("sample",sample, obj_id, sample_id)
     return sample
 
 
@@ -77,8 +76,6 @@ async def get_sample(request:Request, sample_id:str):
 # }
 
 async def create_sample(request:Request,sample:Sample = Body(...)):
-    #print(request)
-    print(sample)
     saved_sample = await sample.save(request.state.dbsession)
     return saved_sample
     
