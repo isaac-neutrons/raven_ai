@@ -1,17 +1,11 @@
-
-#const { home } = require("../controllers/home_controller.js");
-#router.get('/', home);
-
-#module.exports = router;
-
 from fastapi import APIRouter
 from controllers.home_controller import home
-from controllers.sample_controller import create_sample, delete_sample, get_sample, update_sample
+# from controllers.sample_controller import create_sample, delete_sample, get_sample, update_sample
 #rql_sample
-from models.sample import Sample
+# from models.sample import Sample
 from controllers.datamodel_controller import create_dataobject,delete_dataobject,get_dataobject,update_dataobject
-from models.odm.datamodel import DataModel
-router = APIRouter(prefix="/api") #prefix="/users"
+# from models.odm.datamodel import DataModel
+router = APIRouter(prefix="/api") 
 
 #Router-Controller Mapping
 
@@ -37,27 +31,6 @@ router.post("/{datamodel}/create",status_code=201)(create_dataobject)
 router.delete("/{datamodel}/delete/{obj_id}")(delete_dataobject)
 #update sample
 router.post("/{datamodel}/update/{obj_id}",status_code=201,)(update_dataobject)
-
-
-#reflectivity
-#add_or_update_reflectivity
-#get_reflectivities
-#delete_reflectivity
-
-#eis
-#add_or_update_eis
-#get_eis
-#delete_eis
-
-#environment
-#add_or_update_environment
-#get_environments
-#delete_environment
-
-#publication
-#add_or_update_publication
-#get_publications
-#delete_publication
 
 
 #last

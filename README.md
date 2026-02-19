@@ -2,7 +2,7 @@
 test project with python, ravendb and AI agents
 
 
-# envirnoment instructions
+# environment instructions
 
 ```bash
 conda env create -f environment.yml

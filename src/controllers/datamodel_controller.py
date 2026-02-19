@@ -18,7 +18,18 @@ datamodels={
 }
 
 
-async def delete_dataobject(request:Request, datamodel: str,obj_id:str):
+async def delete_dataobject(request:Request, datamodel: str,obj_id:str) -> dict:
+    """
+    It deletes a dataobject.
+
+    :param datamodel: datamodel type from : [sample,environment,reflectivity,eis,publication].
+    :type datamodel: str
+    :param obj_id: object GUID Id
+    :type obj_id: str
+    :returns: the status completion and the deleted object id {"status":"success","deleted_id":obj_id}
+    :rtype: dict    
+    """
+
     session = request.state.dbsession
     cls_model = datamodels[datamodel]
     if cls_model is None:
@@ -31,7 +42,17 @@ async def delete_dataobject(request:Request, datamodel: str,obj_id:str):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-async def get_dataobject(request:Request, datamodel: str, obj_id:str):
+async def get_dataobject(request:Request, datamodel: str, obj_id:str) ->Sample | Environment | Reflectivity | EIS | Publication:
+    """
+    It finds and returns an active dataobject.
+
+    :param datamodel: datamodel type from : [sample,environment,reflectivity,eis,publication].
+    :type datamodel: str
+    :param obj_id: object GUID Id
+    :type obj_id: str
+    :returns: the object with its fields
+    :rtype: Sample | Environment | Reflectivity | EIS | Publication    
+    """    
     session = request.state.dbsession
     cls_model = datamodels[datamodel]
     if cls_model is None:
@@ -39,13 +60,24 @@ async def get_dataobject(request:Request, datamodel: str, obj_id:str):
     
     #obj_id = urllib.parse.unquote(obj_id, encoding='utf-8', errors='strict')
     obj = cls_model.find_by_id(session, obj_id)
-    return obj.view_object()
-
+    if obj:
+        return obj.view_object()
+    return None
 
 #Body(..., embed=True)
 ### valid JSON schema
 ##from the exact fields from the associated datamodel!
-async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)):
+async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)) ->Sample | Environment | Reflectivity | EIS | Publication:
+    """
+    It creates a new dataobject.
+
+    :param datamodel: datamodel type from : [sample,environment,reflectivity,eis,publication].
+    :type datamodel: str
+    :param data: dict with all the fields and the values for an object 
+    :type data: dict (POST body)
+    :returns: the object with its fields
+    :rtype: Sample | Environment | Reflectivity | EIS | Publication   
+    """      
     session = request.state.dbsession
     cls_model = datamodels[datamodel]
     if cls_model is None:
@@ -67,9 +99,22 @@ async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)
         raise RequestValidationError(e.errors())
 
     doc = await obj.save(request.state.dbsession)
-    return doc.view_object()
+    if doc:
+        return doc.view_object()
+    return None
 
-async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict[str,Any] = Body(..., embed=True)):
+async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict[str,Any] = Body(..., embed=True)) ->Sample | Environment | Reflectivity | EIS | Publication:
+    """
+    It updates an active dataobject with  Id obj_id.
+
+    :param datamodel: datamodel type from : [sample,environment,reflectivity,eis,publication].
+    :type datamodel: str
+    :param data: dict that contains the fields and the values that need to be updated to, replacing the exisiting values to the news ones
+    :type data: dict
+    :returns:the object with its fields
+    :rtype: Sample | Environment | Reflectivity | EIS | Publication 
+    """   
+
     session = request.state.dbsession
     cls_model = datamodels[datamodel]
     if cls_model is None:
@@ -95,7 +140,9 @@ async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict
            setattr(data_obj, field, value)
         
         doc = await data_obj.save(request.state.dbsession)
-        return doc.view_object()
+        if doc:
+            return doc.view_object()
+        return None
     
     #data_obj does not exist
     raise HTTPException(

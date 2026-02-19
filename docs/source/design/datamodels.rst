@@ -14,6 +14,8 @@ DB Schema
  classDiagram
 
     Sample "1" -->"N" Environment
+    Sample -->"N" Sample
+
     Sample "1" -->"1" Layer : substrate_layer
     Sample "1" -->"1<=N<=5" Layer : layers
 
@@ -36,6 +38,7 @@ DB Schema
         +str main_composition
         +list~Layer~ layers
         +list~Publication~ publications
+        +list ~Sample~ related_samples
     }
 
 
@@ -67,14 +70,15 @@ DB Schema
     class Reflectivity{
         +float q_1_angstrom
         +float r
-        +float dR
-        +float dQ
+        +float d_r
+        +float d_q
         +float measurement_geometry
         +datetime reduction_time
     }
 
     class EIS{
         +float frequency
+        +float duration
         +float real_z
         +float imaginery_z
         +float phase
@@ -87,10 +91,11 @@ DB Schema
         +str description
         +Material ambiant_medium?
         +float temperature?
-        +float pressure
+        +float pressure?
         +float relative_humidity?
         +list~Measurement~ measurements
-    
+        +datetime timestamp
+
     }
 
 
@@ -120,6 +125,8 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Environment <|-- DataModel
     Publication <|-- DataModel
 
+    Sample --> Sample
+
     Sample "1" o-- "N" Environment
     Sample "1" *-- "1" Layer : substrate_layer
     Sample "1" *-- "1<=N<=5" Layer : layers
@@ -135,7 +142,7 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
     Sample "N" o--"N" Publication     
     
     class Sample{
-
+        +$get_foreign_key_fields(cls)
     }
 
     class Layer{
@@ -160,7 +167,7 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
 
     class Environment{
 
-    
+        +$get_foreign_key_fields(cls)
     } 
 
     class DataModel{
@@ -172,11 +179,16 @@ Classes defined as DataModel are stored in separate collections in the DB. Class
         +save(self, session)
         +delete(self,session)
         +restore(self,session)
+        +view_object(self)
 
         +$connect_to_store(cls)
         +$find_by_id(cls, session, doc_id)
         +$find_active(cls, session)
         +$raw_rql(cls, session, query)
+        +$get_foreign_key_fields(cls)
+        +$validate_main_fields(cls, payload)
+        +$get_foreign_key_fields(cls)
+        +$validate_foreign_keys(cls,session, foreign_keys,field)
     }
 
     class BaseModel{
