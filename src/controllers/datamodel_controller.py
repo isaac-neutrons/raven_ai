@@ -111,7 +111,7 @@ async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict
     :type datamodel: str
     :param data: dict that contains the fields and the values that need to be updated to, replacing the exisiting values to the news ones
     :type data: dict
-    :returns:the object with its fields
+    :returns: the object with its fields
     :rtype: Sample | Environment | Reflectivity | EIS | Publication 
     """   
 
