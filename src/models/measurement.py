@@ -9,7 +9,8 @@ from pydantic import Field, AliasChoices
 class Measurement(DataModel): 
     proposal_number:str
     facility:Literal["SNS", "HFIR", "LCLS"]
-    lab:Literal["ORNL", "SLAC"]
+    instrument: Literal["REF_L"]
+    laboratory:Literal["ORNL", "SLAC"]
     probe:Literal["neutrons", "xray", "other"]
     technique: Literal["Reflectivity"] 
     technique_description: str # prepend the technique value above of the raw data
@@ -21,12 +22,13 @@ class Measurement(DataModel):
 
     
 class Reflectivity(Measurement):    
-    q_1_angstrom:float
-    r:float
-    d_r: float
-    d_q: float
-    measurement_geometry:float
+    q_1_angstrom:list[float] = Field(default_factory=list)
+    r:list[float] = Field(default_factory=list)
+    d_r: list[float] = Field(default_factory=list)
+    d_q: list[float] = Field(default_factory=list)
+    measurement_geometry:str   #float
     reduction_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    reduction_version: str
 
 
 class EIS(Measurement):

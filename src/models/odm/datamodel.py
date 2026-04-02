@@ -80,7 +80,7 @@ class DataModel(BaseModel):
     def find_by_id(cls: Type["DataModel"],session, doc_id: str) -> Optional["DataModel"]:
         data=None
         data = session.load(doc_id, cls)
-        print("data",data)
+        #print("data",data)
         try:
             if data and data.is_deleted:
                 data = None 
@@ -134,8 +134,10 @@ class DataModel(BaseModel):
                 TypeAdapter(annotated_type).validate_python(value)
             except ValidationError as ve:
                 for err in ve.errors():
+                    #print("err",err, key)
+                    subloc = err.get("loc") or ()
                     errors.append({
-                        "loc": ("body", "data") + tuple(err.get("loc", (key,))),
+                        "loc": ("body", "data", key, *subloc),
                         "msg": err.get("msg", "validation error"),
                         "type": err.get("type", "value_error"),
                     })

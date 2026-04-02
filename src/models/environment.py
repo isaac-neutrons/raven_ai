@@ -10,6 +10,7 @@ class Environment(DataModel):
   ambiant_medium:Optional[Material]
   temperature:Optional[float]= None
   pressure:Optional[float]= None
+  potential:Optional[float]= None
   relative_humidity:Optional[float] = None
   measurements_ids: Optional[list[str]] = Field(default_factory=list) # point to Measurements
   timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

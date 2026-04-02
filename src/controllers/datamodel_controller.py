@@ -42,7 +42,7 @@ async def delete_dataobject(request:Request, datamodel: str,obj_id:str) -> dict:
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-async def get_dataobject(request:Request, datamodel: str, obj_id:str) ->Sample | Environment | Reflectivity | EIS | Publication:
+async def get_dataobject(request:Request, datamodel: str, obj_id:str) ->dict:
     """
     It finds and returns an active dataobject.
 
@@ -61,13 +61,13 @@ async def get_dataobject(request:Request, datamodel: str, obj_id:str) ->Sample |
     #obj_id = urllib.parse.unquote(obj_id, encoding='utf-8', errors='strict')
     obj = cls_model.find_by_id(session, obj_id)
     if obj:
-        return obj.view_object()
+        return obj.view_object().model_dump()
     return None
 
 #Body(..., embed=True)
 ### valid JSON schema
 ##from the exact fields from the associated datamodel!
-async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)) ->Sample | Environment | Reflectivity | EIS | Publication:
+async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)) ->dict:
     """
     It creates a new dataobject.
 
@@ -100,10 +100,10 @@ async def create_dataobject(request:Request,datamodel: str,data:dict = Body(...)
 
     doc = await obj.save(request.state.dbsession)
     if doc:
-        return doc.view_object()
+        return doc.view_object().model_dump()
     return None
 
-async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict[str,Any] = Body(..., embed=True)) ->Sample | Environment | Reflectivity | EIS | Publication:
+async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict[str,Any] = Body(..., embed=True)) ->dict:
     """
     It updates an active dataobject with  Id obj_id.
 
@@ -141,7 +141,7 @@ async def update_dataobject(request:Request,datamodel: str,obj_id:str, data:Dict
         
         doc = await data_obj.save(request.state.dbsession)
         if doc:
-            return doc.view_object()
+            return doc.view_object().model_dump()
         return None
     
     #data_obj does not exist

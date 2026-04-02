@@ -8,6 +8,8 @@ from models.material import Material
 class Layer(BaseModel):
   material: Material
   thickness: float
+  roughness: Optional[float] = None
+  sld: Optional[float] = None
 
 class Sample(DataModel):
   description:str
@@ -17,8 +19,7 @@ class Sample(DataModel):
   geometry: Optional[str] = None # from substrate not required
   layers:list[Layer] = Field(min_length=1,max_length=5) #all the layer including the main one!
   publication_ids:list[str] = Field(default_factory=list) #Publication
-  related_sample_ids:list[str] = Field(default_factory=list) #Sample
 
   @classmethod
   def get_foreign_key_fields(cls):
-    return ["environment_ids","publication_ids","related_sample_ids"]
+    return ["environment_ids","publication_ids"]

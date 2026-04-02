@@ -56,6 +56,7 @@ if __name__ == '__main__':
         # Convert FastAPI/Pydantic errors into RFC7807-like shape
         invalid_params = []
         for e in exc.errors():
+            #print("e",e)
             field_path = [str(x) for x in e.get("loc", [])] 
             message = e.get("msg", "Invalid value")
             type_error = e.get("type", "validation_error")
