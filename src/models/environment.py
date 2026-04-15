@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 class Environment(DataModel):
 
   description:str
-  ambiant_medium:Optional[Material]
+  ambient_medium:Optional[Material]
   temperature:Optional[float]= None
   pressure:Optional[float]= None
   potential:Optional[float]= None
