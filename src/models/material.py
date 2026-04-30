@@ -2,7 +2,9 @@ from pydantic import BaseModel
 from typing import Optional
 
 class Material(BaseModel):
-  composition: str
+  name: str
   mass: Optional[float] = None
   density: Optional[float] = None
+  sld: Optional[float] = None
+  isld: Optional[float] = None
 

@@ -225,72 +225,74 @@ Software Architecture
 
         db:L -- R:WebServer
 
-ISAAC-DOE
 
-.. mermaid::
+.. 
+    ISAAC-DOE
 
- classDiagram
+    .. mermaid::
 
-    class templates {
-        +int: id
-        +varchar~255~:name
-        +JSONB:data
-        +datetime:created_at
-        +datetime:updated_at
-    } 
+    classDiagram
 
-    class records {
-        +int: id
-        +char~26~:record_id
-        +varchar~50~:record_type
-        +varchar~50~:record_domain
-        +JSONB:data
-        +datetime:created_at
-    
-    }
+        class templates {
+            +int: id
+            +varchar~255~:name
+            +JSONB:data
+            +datetime:created_at
+            +datetime:updated_at
+        } 
 
-    class portal_access_log {
-        +int: id
-        +varchar~255~:username
-        +datetime:accessed_at
-    
-    }
+        class records {
+            +int: id
+            +char~26~:record_id
+            +varchar~50~:record_type
+            +varchar~50~:record_domain
+            +JSONB:data
+            +datetime:created_at
+        
+        }
 
-    class vocabulary_cache {
-        +int: id
-        +varchar~100~:section
-        +varchar~255~:category
-        +text:description
-        +JSONB:terms
-        +datetime:synced_at
-        +varchar~100~:wiki_page
-    
-    }
+        class portal_access_log {
+            +int: id
+            +varchar~255~:username
+            +datetime:accessed_at
+        
+        }
 
-    class vocabulary_sync_log {
-        +int: id
-        +varchar~255~:synced_by
-        +int:sections_count
-        +int:categories_count
-        +varchar~20~:status
-        +datetime:synced_at
-        +text:error_message
-    
-    }
+        class vocabulary_cache {
+            +int: id
+            +varchar~100~:section
+            +varchar~255~:category
+            +text:description
+            +JSONB:terms
+            +datetime:synced_at
+            +varchar~100~:wiki_page
+        
+        }
 
-    class vocabulary_proposals {
-        +int: id
-        +varchar~30~:proposal_type
-        +varchar~100~:section
-        +varchar~255~:category
-        +varchar~255~:term
-        +text:description
-        +varchar~255~:proposed_by
-        +datetime:proposed_at
-        +varchar~20~:status
-        +varchar~255~:reviewed_by
-        +datetime:reviewed_at
-        +text:review_comment
+        class vocabulary_sync_log {
+            +int: id
+            +varchar~255~:synced_by
+            +int:sections_count
+            +int:categories_count
+            +varchar~20~:status
+            +datetime:synced_at
+            +text:error_message
+        
+        }
 
-    }        
-https://github.com/ISAAC-DOE/isaac-ai-ready-record/blob/7136638eb71d4c775b6118bf9e50485799fe6752/data_collection/convert_to_isaac.py#L57
+        class vocabulary_proposals {
+            +int: id
+            +varchar~30~:proposal_type
+            +varchar~100~:section
+            +varchar~255~:category
+            +varchar~255~:term
+            +text:description
+            +varchar~255~:proposed_by
+            +datetime:proposed_at
+            +varchar~20~:status
+            +varchar~255~:reviewed_by
+            +datetime:reviewed_at
+            +text:review_comment
+
+        }        
+    https://github.com/ISAAC-DOE/isaac-ai-ready-record/blob/7136638eb71d4c775b6118bf9e50485799fe6752/data_collection/convert_to_isaac.py#L57

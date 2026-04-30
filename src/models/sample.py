@@ -6,10 +6,10 @@ from models.material import Material
 
 
 class Layer(BaseModel):
+  name:str
   material: Material
   thickness: float
   roughness: Optional[float] = None
-  sld: Optional[float] = None
 
 class Sample(DataModel):
   description:str
